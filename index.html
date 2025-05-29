@@ -1,318 +1,301 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" class="">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculadora de Quilometragem</title>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#00cc99"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            poppins: ['Poppins', 'sans-serif'],
+          },
+          colors: {
+            primary: {
+              DEFAULT: '#00cc99',
+              hover: '#00b386',
+              text: '#0066cc',
+            },
+            secondary: '#0066cc',
+            light: {
+              bg: '#f0f8ff',
+              text: '#1f2937',
+              container: '#ffffff',
+              input: '#f9fafb',
+              resultBg: '#e6ffe6',
+              resultText: '#006600',
+              historyBg: '#f3f4f6',
+              historyText: '#374151',
+              clearButtonBg: '#ffcccc',
+              clearButtonText: '#cc0000',
+              clearButtonHoverBg: '#ffaaaa',
+            },
+            dark: {
+              bg: '#111827',
+              text: '#e5e7eb',
+              container: '#1f2937',
+              input: '#374151',
+              primaryText: '#66ccff',
+              resultBg: '#102a10',
+              resultText: '#66ff66',
+              historyBg: '#2d3748',
+              historyText: '#cbd5e1',
+              clearButtonBg: '#502424',
+              clearButtonText: '#ff8080',
+              clearButtonHoverBg: '#662d2d',
+            }
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    :root {
-      --bg-color: #f0f8ff;
-      --text-color: #333;
-      --container-bg: #fff;
-      --border-color: #00cc99;
-      --label-color: #0066cc;
-      --result-bg: #e6ffe6;
-      --result-color: #006600;
-      --historico-bg: #f9f9f9;
-      --historico-color: #555;
+    ::-webkit-scrollbar {
+      width: 8px;
     }
-
-    body.dark {
-      --bg-color: #121212;
-      --text-color: #e0e0e0;
-      --container-bg: #1e1e1e;
-      --border-color: #00cc99;
-      --label-color: #66ccff;
-      --result-bg: #1b3d1b;
-      --result-color: #66ff66;
-      --historico-bg: #2a2a2a;
-      --historico-color: #ccc;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      margin: 0;
-      padding: 0;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    .container {
-      max-width: 500px;
-      margin: 100px auto 30px;
-      background: var(--container-bg);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      box-sizing: border-box;
-    }
-
-    h2 {
-      color: var(--label-color);
-      text-align: center;
-      font-size: 1.5rem;
-    }
-
-    label {
-      margin-top: 15px;
-      display: block;
-      color: var(--label-color);
-      font-weight: bold;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border: 2px solid var(--border-color);
-      border-radius: 5px;
+    ::-webkit-scrollbar-track {
       background: transparent;
-      color: var(--text-color);
-      font-size: 1rem;
     }
-
-    .campo-hodometro {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
     }
-
-    .limpar-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--label-color);
-      display: flex;
-      align-items: center;
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
     }
-
-    .limpar-btn svg {
-      width: 24px;
-      height: 24px;
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
-
-    #resultado-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 30px;
-    }
-
-    #resultado {
-      flex: 1;
-      background-color: var(--result-bg);
-      padding: 20px;
-      text-align: center;
-      font-size: 1.2rem;
-      font-weight: bold;
-      border-radius: 8px;
-      color: var(--result-color);
-    }
-
-    #copiarResultadoBtn {
-      background-color: var(--border-color);
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #historicoBtn, #modoBtn {
-      position: fixed;
-      top: 10px;
-      background-color: transparent;
-      border: none;
-      color: var(--label-color);
-      cursor: pointer;
-      font-size: 0.9rem;
-      text-decoration: underline;
-      z-index: 1000;
-    }
-
-    #historicoBtn {
-      right: 10px;
-    }
-
-    #modoBtn {
-      left: 10px;
-    }
-
-    #historico {
-      display: none;
-      margin-top: 20px;
-      font-size: 0.9rem;
-      background: var(--historico-bg);
-      padding: 10px;
-      border: 1px dashed var(--border-color);
-      border-radius: 6px;
-      color: var(--historico-color);
-    }
-
-    #limparHistoricoBtn {
-      margin-top: 10px;
-      background: #ff6666;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      font-size: 0.9rem;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .watermark {
-      text-align: center;
-      margin-top: 40px;
-      color: rgba(0,0,0,0.15);
-      font-size: 0.9rem;
-    }
-
-    @media (max-width: 400px) {
-      input, label {
-        font-size: 0.95rem;
-      }
-
-      h2 {
-        font-size: 1.2rem;
-      }
+    input[type=number] {
+      -moz-appearance: textfield;
     }
   </style>
 </head>
-<body>
-  <button id="modoBtn">Modo Escuro</button>
-  <button id="historicoBtn">Ver histórico</button>
+<body class="font-poppins bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text min-h-screen flex flex-col items-center justify-center p-4 transition-colors duration-300">
 
-  <div class="container">
-    <h2>Calculadora de Quilometragem</h2>
+  <div class="bg-light-container dark:bg-dark-container shadow-2xl rounded-xl p-6 md:p-8 w-full max-w-lg">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl md:text-3xl font-bold text-primary-text dark:text-dark-primaryText">
+        Calculadora KM
+      </h2>
+      <div class="flex space-x-2">
+        <button id="modoBtn" class="p-2 rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" aria-label="Alternar modo escuro">
+          <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm0 15a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm8-9a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM3 10a1 1 0 01-1 1H1a1 1 0 110-2h1a1 1 0 011 1zm15-4.243a1 1 0 01-1.414 0l-.707-.707a1 1 0 111.414-1.414l.707.707a1 1 0 010 1.414zM4.929 15.071a1 1 0 01-1.414 0l-.707-.707a1 1 0 011.414-1.414l.707.707a1 1 0 010 1.414zM15.071 4.929a1 1 0 01.001 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.413-.001zM4.929 4.929a1 1 0 011.414 0l.707.707a1 1 0 11-1.414 1.414l-.707-.707a1 1 0 010-1.414zM10 7a3 3 0 100 6 3 3 0 000-6z" clip-rule="evenodd" />
+          </svg>
+          <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-400 hidden" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+          </svg>
+        </button>
+        <button id="historicoBtn" class="py-2 px-3 rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-sm font-medium transition-colors">
+          Histórico
+        </button>
+      </div>
+    </div>
 
-    <label for="hodometro">Hodômetro atual (km):</label>
-    <div class="campo-hodometro">
-      <input type="number" id="hodometro" min="0" step="0.1" placeholder="Ex: 12345.6">
-      <button id="limparCamposBtn" class="limpar-btn" title="Limpar hodômetro e litros">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 2v6h-6"/>
-          <path d="M3 13a9 9 0 0 1 15-6.7L21 8"/>
-          <path d="M21 12a9 9 0 1 1-6-8.7"/>
-        </svg>
+    <div class="space-y-5">
+      <div>
+        <label for="hodometro" class="block text-sm font-medium text-primary-text dark:text-dark-primaryText mb-1">Hodômetro atual (km)</label>
+        <input type="number" id="hodometro" min="0" step="0.1" placeholder="Ex: 12345.6"
+               class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-light-input dark:bg-dark-input focus:ring-2 focus:ring-primary dark:focus:ring-primary focus:border-transparent outline-none transition-all">
+      </div>
+
+      <div>
+        <label for="litros" class="block text-sm font-medium text-primary-text dark:text-dark-primaryText mb-1">Litros abastecidos</label>
+        <input type="number" id="litros" min="0" step="0.1" placeholder="Ex: 45.0"
+               class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-light-input dark:bg-dark-input focus:ring-2 focus:ring-primary dark:focus:ring-primary focus:border-transparent outline-none transition-all">
+      </div>
+
+      <div>
+        <label for="media" class="block text-sm font-medium text-primary-text dark:text-dark-primaryText mb-1">Média de km/L do veículo</label>
+        <input type="number" id="media" min="0" step="0.1" placeholder="Ex: 10.5"
+               class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-light-input dark:bg-dark-input focus:ring-2 focus:ring-primary dark:focus:ring-primary focus:border-transparent outline-none transition-all">
+      </div>
+      
+      <button id="recalcularBtn" class="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+        Recalcular Próximo Abastecimento
+      </button>
+
+      <button id="limparBtn" class="w-full bg-light-clearButtonBg dark:bg-dark-clearButtonBg text-light-clearButtonText dark:text-dark-clearButtonText hover:bg-light-clearButtonHoverBg dark:hover:bg-dark-clearButtonHoverBg font-semibold py-3 px-4 rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+        Limpar Campos
       </button>
     </div>
 
-    <label for="litros">Litros abastecidos:</label>
-    <input type="number" id="litros" min="0" step="0.1" placeholder="Ex: 45.0">
-
-    <label for="media">Média de km/l do veículo:</label>
-    <input type="number" id="media" min="0" step="0.1" placeholder="Ex: 10.5">
-
-    <div id="resultado-container">
-      <div id="resultado">Hodômetro final: 0.0 km</div>
-      <button id="copiarResultadoBtn" title="Enviar para Hodômetro">➡️</button>
+    <div id="resultado" class="mt-6 bg-light-resultBg dark:bg-dark-resultBg text-light-resultText dark:text-dark-resultText p-4 rounded-lg text-center text-lg font-semibold">
+      Preencha os campos para calcular
     </div>
 
-    <div id="historico"></div>
+    <div id="historicoContainer" class="mt-6 hidden">
+      <h3 class="text-lg font-semibold mb-2 text-primary-text dark:text-dark-primaryText">Histórico de Cálculos:</h3>
+      <ul id="historicoLista" class="max-h-48 overflow-y-auto space-y-1 bg-light-historyBg dark:bg-dark-historyBg p-3 rounded-md text-sm text-light-historyText dark:text-dark-historyText border border-gray-200 dark:border-gray-700">
+        <li class="italic">Nenhum cálculo realizado ainda.</li>
+      </ul>
+    </div>
   </div>
-
-  <div class="watermark">By: Carlos A.</div>
 
   <script>
     const hodometroInput = document.getElementById("hodometro");
     const litrosInput = document.getElementById("litros");
     const mediaInput = document.getElementById("media");
     const resultadoDiv = document.getElementById("resultado");
-    const historicoBtn = document.getElementById("historicoBtn");
-    const historicoDiv = document.getElementById("historico");
     const modoBtn = document.getElementById("modoBtn");
-    const limparCamposBtn = document.getElementById("limparCamposBtn");
-    const copiarResultadoBtn = document.getElementById("copiarResultadoBtn");
+    const sunIcon = document.getElementById("sunIcon");
+    const moonIcon = document.getElementById("moonIcon");
+    const historicoBtn = document.getElementById("historicoBtn");
+    const recalcularBtn = document.getElementById("recalcularBtn");
+    const limparBtn = document.getElementById("limparBtn");
+    const historicoContainer = document.getElementById("historicoContainer");
+    const historicoLista = document.getElementById("historicoLista");
+    const htmlElement = document.documentElement;
 
-    let historico = JSON.parse(localStorage.getItem("historico")) || [];
+    let historicoCalculos = [];
+    let ultimoKmCalculado = 0;
+    let modoRecalculoAtivo = false;
 
-    function formatarNumero(valor) {
-      return parseFloat(valor).toFixed(1);
-    }
-
-    function salvarHistorico() {
-      localStorage.setItem("historico", JSON.stringify(historico));
-    }
-
-    function calcular() {
-      const hodometro = parseFloat(hodometroInput.value);
-      const litros = parseFloat(litrosInput.value);
-      const media = parseFloat(mediaInput.value);
-
-      if (isNaN(hodometro) || isNaN(litros) || isNaN(media)) {
-        resultadoDiv.textContent = "Preencha todos os campos corretamente.";
-        return;
-      }
-
-      const kmAdicional = litros * media;
-      const resultado = hodometro + kmAdicional;
-      const resultadoFormatado = formatarNumero(resultado);
-
-      resultadoDiv.textContent = `Hodômetro final: ${resultadoFormatado} km`;
-
-      historico.push(
-        `Hodômetro: ${formatarNumero(hodometro)} + (${formatarNumero(litros)}L × ${formatarNumero(media)}km/L) = ${resultadoFormatado} km`
-      );
-      salvarHistorico();
-    }
-
-    function exibirHistorico() {
-      if (historico.length === 0) {
-        historicoDiv.innerHTML = "Nenhum cálculo realizado ainda.";
+    function setModoVisual(isDark) {
+      if (isDark) {
+        htmlElement.classList.add('dark');
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+        localStorage.setItem('darkMode', 'true');
       } else {
-        historicoDiv.innerHTML = "<strong>Histórico:</strong><br>" + historico.map(h => `• ${h}`).join("<br>");
-        historicoDiv.innerHTML += '<br><button id="limparHistoricoBtn">Limpar histórico</button>';
-        document.getElementById("limparHistoricoBtn").addEventListener("click", () => {
-          historico = [];
-          salvarHistorico();
-          historicoDiv.innerHTML = "Histórico limpo.";
-        });
+        htmlElement.classList.remove('dark');
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+        localStorage.setItem('darkMode', 'false');
       }
     }
-
-    [hodometroInput, litrosInput, mediaInput].forEach(input => {
-      input.addEventListener("input", calcular);
-    });
-
-    historicoBtn.addEventListener("click", () => {
-      exibirHistorico();
-      historicoDiv.style.display = historicoDiv.style.display === "none" ? "block" : "none";
-    });
 
     modoBtn.addEventListener("click", () => {
-      document.body.classList.toggle("dark");
-      modoBtn.textContent = document.body.classList.contains("dark") ? "Modo Claro" : "Modo Escuro";
+      setModoVisual(!htmlElement.classList.contains('dark'));
     });
 
-    limparCamposBtn.addEventListener("click", () => {
+    if (localStorage.getItem('darkMode') === 'true' ||
+        (localStorage.getItem('darkMode') === null && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      setModoVisual(true);
+    } else {
+      setModoVisual(false);
+    }
+
+    historicoBtn.addEventListener("click", () => {
+      historicoContainer.classList.toggle("hidden");
+      historicoBtn.textContent = historicoContainer.classList.contains("hidden") ? "Ver Histórico" : "Ocultar Histórico";
+    });
+
+    function calcularEAtualizar() {
+      const hValue = hodometroInput.value;
+      const lValue = litrosInput.value;
+      const mValue = mediaInput.value;
+
+      if (hValue === "" || lValue === "" || mValue === "") {
+        if (modoRecalculoAtivo && lValue === "") {
+            resultadoDiv.textContent = "Insira os litros para recalcular.";
+        } else {
+            resultadoDiv.textContent = "Preencha todos os campos para calcular";
+        }
+        resultadoDiv.classList.remove('bg-red-100', 'dark:bg-red-900', 'text-red-700', 'dark:text-red-300');
+        resultadoDiv.classList.add('bg-light-resultBg', 'dark:bg-dark-resultBg', 'text-light-resultText', 'dark:text-dark-resultText');
+        return;
+      }
+      
+      modoRecalculoAtivo = false; // Any successful calculation attempt resets this flag
+
+      const h = parseFloat(hValue);
+      const l = parseFloat(lValue);
+      const m = parseFloat(mValue);
+
+      if (isNaN(h) || isNaN(l) || isNaN(m) || l < 0 || m <= 0 || h < 0) {
+        resultadoDiv.textContent = "Valores inválidos. Verifique os campos.";
+        resultadoDiv.classList.remove('bg-light-resultBg', 'dark:bg-dark-resultBg', 'text-light-resultText', 'dark:text-dark-resultText');
+        resultadoDiv.classList.add('bg-red-100', 'dark:bg-red-900', 'text-red-700', 'dark:text-red-300');
+        return;
+      }
+      
+      resultadoDiv.classList.add('bg-light-resultBg', 'dark:bg-dark-resultBg', 'text-light-resultText', 'dark:text-dark-resultText');
+      resultadoDiv.classList.remove('bg-red-100', 'dark:bg-red-900', 'text-red-700', 'dark:text-red-300');
+
+      const kmFinal = h + (l * m);
+      resultadoDiv.textContent = `Hodômetro final: ${kmFinal.toFixed(1)} km`;
+      
+      const currentInputsSignature = `${h.toFixed(1)}-${l.toFixed(1)}-${m.toFixed(1)}`;
+      let addThisToHistory = true;
+      if (historicoCalculos.length > 0) {
+          const lastEntry = historicoCalculos[0];
+          const lastEntrySignature = `${lastEntry.hodometroInicial}-${lastEntry.litros}-${lastEntry.media}`;
+          if (lastEntrySignature === currentInputsSignature && lastEntry.hodometroFinal === kmFinal.toFixed(1)) {
+              addThisToHistory = false;
+          }
+      }
+
+      if (addThisToHistory) {
+          const registroHistorico = {
+            hodometroInicial: h.toFixed(1),
+            litros: l.toFixed(1),
+            media: m.toFixed(1),
+            hodometroFinal: kmFinal.toFixed(1),
+            timestamp: new Date().toLocaleString('pt-BR')
+          };
+          historicoCalculos.unshift(registroHistorico);
+          atualizarDisplayHistorico();
+      }
+      ultimoKmCalculado = kmFinal;
+    }
+
+    function atualizarDisplayHistorico() {
+      if (historicoCalculos.length === 0) {
+        historicoLista.innerHTML = '<li class="italic">Nenhum cálculo realizado ainda.</li>';
+        return;
+      }
+      historicoLista.innerHTML = historicoCalculos.map(item => `
+        <li class="p-2 border-b border-gray-300 dark:border-gray-600 last:border-b-0">
+          <span class="font-semibold">${item.timestamp}:</span><br>
+          H. Inicial: ${item.hodometroInicial}km + (${item.litros}L × ${item.media}km/L) = <strong>${item.hodometroFinal}km</strong>
+        </li>
+      `).join("");
+    }
+    
+    function recalcularValores() {
+        if (ultimoKmCalculado > 0) {
+            hodometroInput.value = ultimoKmCalculado.toFixed(1);
+            litrosInput.value = "";
+            resultadoDiv.textContent = "Insira os litros para recalcular.";
+            resultadoDiv.classList.remove('bg-red-100', 'dark:bg-red-900', 'text-red-700', 'dark:text-red-300');
+            resultadoDiv.classList.add('bg-light-resultBg', 'dark:bg-dark-resultBg', 'text-light-resultText', 'dark:text-dark-resultText');
+            modoRecalculoAtivo = true;
+            litrosInput.focus();
+        } else {
+            resultadoDiv.textContent = "Faça um cálculo primeiro para poder recalcular.";
+            modoRecalculoAtivo = false;
+        }
+    }
+
+    function limparCampos() {
       hodometroInput.value = "";
       litrosInput.value = "";
-      calcular();
-    });
-
-    copiarResultadoBtn.addEventListener("click", () => {
-      const resultadoTexto = resultadoDiv.textContent;
-      const match = resultadoTexto.match(/([\d.]+) km/);
-      if (match) {
-        const valor = parseFloat(match[1]);
-        hodometroInput.value = valor;
-        litrosInput.value = "";
-        calcular(); // média permanece
-      }
-    });
-
-    // PWA: registrar service worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').then(() => {
-        console.log("Service Worker registrado com sucesso.");
-      }).catch(error => {
-        console.error("Erro ao registrar o Service Worker:", error);
-      });
+      mediaInput.value = "";
+      resultadoDiv.textContent = "Preencha os campos para calcular";
+      resultadoDiv.classList.remove('bg-red-100', 'dark:bg-red-900', 'text-red-700', 'dark:text-red-300');
+      resultadoDiv.classList.add('bg-light-resultBg', 'dark:bg-dark-resultBg', 'text-light-resultText', 'dark:text-dark-resultText');
+      ultimoKmCalculado = 0;
+      modoRecalculoAtivo = false;
+      hodometroInput.focus();
     }
+
+    recalcularBtn.addEventListener("click", recalcularValores);
+    limparBtn.addEventListener("click", limparCampos);
+
+    [hodometroInput, litrosInput, mediaInput].forEach(input => {
+      input.addEventListener("input", calcularEAtualizar);
+    });
+    
+    atualizarDisplayHistorico();
+
   </script>
 </body>
 </html>
