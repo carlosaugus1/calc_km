@@ -68,4 +68,4 @@ Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICE
 
 ---
 
-Desenvolvido com ❤️ para otimizar o tempo e aumentar a produtividade no trabalho!
+Desenvolvido para otimizar o tempo e aumentar a produtividade no trabalho!
